@@ -1,120 +1,118 @@
 # 🚀 Desafio ML/AI Diário #3 - Dia 3/360
-**⏱️ Tempo estimado:** 20 minutos
+**⏱️ Tempo estimado:** 22 minutos
 **📈 Nível:** Básico
 **📅 Etapa:** Dia 3 de 360 - Fundamentos Python Avançado
-**🎯 Conceitos:** Funções, estatística básica, modularização
-**🧠 Foco:** Criação de funções para análise de dados
+**🎯 Conceitos:** Funções, parâmetros, análise estatística básica
+**🧠 Foco:** Modularização de código e cálculos estatísticos
 **🎓 Jornada:** 357 dias para especialista
-**💻 Stack:** Python (preparando para NumPy/Statistics)
+**💻 Stack:** Python
 
 ## 📋 Descrição do Desafio
-Baseado na sua evolução excepcional nos primeiros dias, vamos acelerar! Como Data Scientist, você precisa criar um **sistema de análise estatística reutilizável** para diferentes datasets. Vamos começar a pensar em **modularização** - conceito essencial para projetos de ML em produção.
+Baseado no seu progresso excepcional, vamos acelerar! Como Data Scientist, você precisa criar funções reutilizáveis para análise de dados de vendas. Você será responsável por construir um "mini toolkit" de análise que poderá ser usado em diferentes datasets - exatamente como bibliotecas profissionais fazem!
 
 ### 📝 Requisitos:
-1. Criar funções para cálculos estatísticos básicos
-2. Analisar um dataset de temperaturas de múltiplas cidades
-3. Implementar detecção de outliers (valores atípicos)
-4. Gerar um relatório comparativo automático
+1. Criar uma função para calcular estatísticas básicas de uma lista de valores
+2. Implementar uma função para classificar performance baseada em critérios
+3. Desenvolver uma função para gerar relatório completo de análise
+4. Testar todas as funções com dados de vendas trimestrais
 
 ### 📚 Conceitos que você vai aprender:
-- **Funções:** Modularização essencial para pipelines de ML
-- **Estatística descritiva:** Base para feature engineering e EDA
-- **Outlier detection:** Técnica fundamental em Data Science
-- **Code reusability:** Princípio crucial para projetos escaláveis
+- **Funções:** Modularização essencial para códigos limpos em ML
+- **Parâmetros e retorno:** Como criar APIs internas reutilizáveis
+- **Estatística descritiva:** Média, mediana, desvio - base para feature engineering
+- **DRY Principle:** Don't Repeat Yourself - fundamento da programação profissional
 
 ### 📊 Dados/Contexto:
-Dataset de temperaturas médias (°C) de 6 cidades brasileiras durante uma semana:
+Dados de vendas trimestrais de diferentes filiais:
 ```python
-temperaturas_cidades = {
-    "São Paulo": [18, 22, 19, 21, 17, 20, 23],
-    "Rio de Janeiro": [25, 28, 26, 29, 24, 27, 30],
-    "Brasília": [16, 19, 15, 18, 14, 17, 20],
-    "Salvador": [27, 30, 28, 31, 26, 29, 32],
-    "Curitiba": [12, 15, 11, 16, 10, 14, 17],
-    "Manaus": [31, 34, 32, 35, 30, 33, 36]
-}
+vendas_q1 = [12500, 15800, 9200, 18900, 11400, 16700, 8900, 14300]
+vendas_q2 = [14200, 17500, 10800, 19400, 13100, 18200, 9600, 15800]
+vendas_q3 = [13800, 16200, 11500, 17800, 12900, 17100, 10200, 16400]
 ```
 
 ### 💡 Exemplo passo a passo:
 ```python
-import statistics
-
-# Passo 1: Criar função para análise básica
-def analisar_temperaturas(lista_temps, nome_cidade):
-    """Análise estatística completa de temperaturas"""
-    media = statistics.mean(lista_temps)
-    mediana = statistics.median(lista_temps)
-    desvio_padrao = statistics.stdev(lista_temps)
+def estatisticas_basicas(dados):
+    """
+    Calcula estatísticas descritivas básicas
+    Args: dados (list) - lista de valores numéricos
+    Returns: dict - dicionário com estatísticas
+    """
+    if not dados:
+        return None
+    
+    total = sum(dados)
+    media = total / len(dados)
+    dados_ordenados = sorted(dados)
+    
+    # Mediana
+    n = len(dados_ordenados)
+    if n % 2 == 0:
+        mediana = (dados_ordenados[n//2-1] + dados_ordenados[n//2]) / 2
+    else:
+        mediana = dados_ordenados[n//2]
+    
+    # Máximo e mínimo
+    maximo = max(dados)
+    minimo = min(dados)
     
     return {
-        'cidade': nome_cidade,
-        'media': round(media, 2),
+        'total': total,
+        'media': media,
         'mediana': mediana,
-        'desvio_padrao': round(desvio_padrao, 2),
-        'temp_min': min(lista_temps),
-        'temp_max': max(lista_temps),
-        'amplitude': max(lista_temps) - min(lista_temps)
+        'maximo': maximo,
+        'minimo': minimo,
+        'amplitude': maximo - minimo
     }
 
-# Passo 2: Função para detectar outliers
-def detectar_outliers(lista_temps, cidade):
-    """Detecta valores atípicos usando regra 1.5*IQR"""
-    lista_ordenada = sorted(lista_temps)
-    n = len(lista_ordenada)
-    
-    # Calcular quartis
-    q1 = lista_ordenada[n//4]
-    q3 = lista_ordenada[3*n//4]
-    iqr = q3 - q1
-    
-    limite_inferior = q1 - 1.5 * iqr
-    limite_superior = q3 + 1.5 * iqr
-    
-    outliers = [temp for temp in lista_temps if temp < limite_inferior or temp > limite_superior]
-    
-    return outliers
+def classificar_performance(valor, benchmarks):
+    """
+    Classifica performance baseada em benchmarks
+    Args: 
+        valor (float) - valor a ser classificado
+        benchmarks (dict) - critérios de classificação
+    Returns: str - classificação
+    """
+    if valor >= benchmarks['excelente']:
+        return 'Excelente'
+    elif valor >= benchmarks['bom']:
+        return 'Bom'
+    elif valor >= benchmarks['regular']:
+        return 'Regular'
+    else:
+        return 'Baixo'
 
-# Passo 3: Análise completa
-resultados = []
-for cidade, temps in temperaturas_cidades.items():
-    analise = analisar_temperaturas(temps, cidade)
-    outliers = detectar_outliers(temps, cidade)
-    analise['outliers'] = outliers
-    resultados.append(analise)
+# Teste suas funções com os dados fornecidos
 ```
 
 ### 🎯 Critérios de Avaliação:
-- ✅ Implementação correta das funções estatísticas
-- 📊 Detecção precisa de outliers
-- 💡 Relatório comparativo informativo
-- 🧹 Código modular e bem documentado
+- ✅ Funções bem estruturadas com docstrings
+- 📊 Cálculos estatísticos corretos
+- 💡 Uso eficiente de parâmetros e retornos
+- 🧹 Código modular e reutilizável
+- 📈 Análise comparativa entre trimestres
 
 ## 📚 Material de Apoio:
-- [Python Functions](https://docs.python.org/3/tutorial/controlflow.html#defining-functions)
-- [Statistics Module](https://docs.python.org/3/library/statistics.html)
-- [Outlier Detection Methods](https://en.wikipedia.org/wiki/Outlier#Detection)
+- [Python Functions - Documentação oficial](https://docs.python.org/3/tutorial/controlflow.html#defining-functions)
+- [Docstrings em Python](https://peps.python.org/pep-0257/)
+- [Estatística descritiva básica](https://docs.python.org/3/library/statistics.html)
 
 ### 📈 Seu Progresso na Jornada:
 **Dia 3 de 360 - Rumo à Especialização!**
 - 🔥 Streak de desafios: 3 dias
 - 📊 Progresso geral: 0.8% completo
-- 🎯 Fase atual: Python Avançado (ACELERADO!)
+- 🎯 Fase atual: Fundamentos Python Avançado
 - 📅 Dias para especialista: 357
-- 🧠 Habilidades desbloqueadas: Loops, condicionais, análise de padrões, modularização
-- 🏆 Marcos alcançados: Performance excepcional - 2-3 dias à frente do cronograma!
+- 🧠 Habilidades desbloqueadas: Dicionários, loops, condicionais, list comprehensions
+- 🏆 Marcos alcançados: **ACELERAÇÃO DETECTADA** - Progresso 2-3 dias à frente!
 
 ### 🎖️ Sistema de Progressão:
-- 📘 **Iniciante** (Dias 1-120): Fundamentos sólidos ← **VOCÊ ESTÁ AQUI (ACELERADO)**
+- 📘 **Iniciante** (Dias 1-120): Fundamentos sólidos ← **VOCÊ ESTÁ AQUI** (Acelerado!)
 - 📗 **Intermediário** (Dias 121-240): ML e análise
 - 📙 **Avançado** (Dias 241-300): Deep Learning e NLP  
 - 📕 **Expert** (Dias 301-360): Projetos e especialização
 
-### 🚀 **ACELERAÇÃO ATIVADA:**
-Devido ao seu desempenho excepcional, este desafio já incorpora conceitos estatísticos que normalmente aparecem na semana 2-3. Você está demonstrando capacidade para absorver conceitos avançados rapidamente!
+### 🌟 **Nota especial - ACELERAÇÃO ATIVA:**
+Devido ao seu desempenho excepcional nos Dias 1-2, este desafio já introduz conceitos que normalmente apareceriam no Dia 7-10! Você está se preparando mais rapidamente para trabalhar com bibliotecas como Pandas e NumPy.
 
-### 🎓 **Conexão com ML/AI:**
-- **Funções:** Base para criar pipelines de preprocessamento
-- **Estatística:** Essencial para feature selection e model evaluation
-- **Outliers:** Técnica crucial para data cleaning em projetos reais
-
-**⭐ Desafio ativo! Você está voando rumo à especialização!** 🎯
+**⭐ Desafio ativo! Continue neste ritmo e você será um especialista antes dos 360 dias!** 🎯
